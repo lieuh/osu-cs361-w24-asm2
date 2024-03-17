@@ -1,3 +1,49 @@
+# Currency Conversion Microservice
+
+This microservice provides real-time currency conversion rates between different currencies and the US dollar. It exposes an HTTP endpoint that accepts POST requests with a currency code and returns the conversion rate.
+
+## Instructions
+### Programmatically REQUEST Data
+To programmatically request data from the microservice, follow these steps:
+
+1. Install Axios: Ensure you have the Axios library installed in your Node.js project. If not, you can install it using npm:
+```
+npm install axios
+```
+2. Make a POST Request: Use Axios to make a POST request to the microservice endpoint /convert, passing the desired currency code in the request body. Here's an example call:
+```
+const axios = require('axios');
+
+const requestData = {
+  currencyCode: 'EUR'
+};
+
+axios.post('http://localhost:3000/convert', requestData)
+  .then(response => {
+    console.log('Conversion rate:', response.data.conversionRate);
+  })
+  .catch(error => {
+    console.error('Error occurred:', error.message);
+  });
+// Replace 'EUR' with the desired currency code.
+```
+### Programmatically RECEIVE Data
+To programmatically receive data from the microservice, ensure you handle the response returned by the Axios POST request. The conversion rate will be available in the response data object (response.data.conversionRate).
+
+### UML Sequence Diagram
+Below is a detailed UML sequence diagram illustrating the process of requesting and receiving data from the microservice:
+```
+Test Program        Microservice
+     |                    |
+     |--- POST Request -->|
+     |                    |
+     |<-- Response -------|
+     |                    |
+     |--- Receive Data --->|
+     |                    |
+ ```    
+This diagram demonstrates the flow of communication between the test program and the microservice. The test program sends a POST request to the microservice, which processes the request and sends back a response containing the conversion rate. Finally, the test program receives the data from the response.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
