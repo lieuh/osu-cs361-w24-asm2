@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Snackbar } from '@mui/material';
 import TranscriptionProcess from './TranscriptionProcess.js';
+import axios from 'axios';
 
 function TranscriptionForm() {
   const [open, setOpen] = useState(false); // Snackbar
   const [transcriptionStarted, setTranscriptionStarted] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [transcript, setTranscript] = useState("");
 
   const handleCloseSnackbar = () => {
     setOpen(false);
   };
 
-  const handleStartTranscription = (event) => {
+  const handleStartTranscription = async (event) => {
     event.preventDefault();
     const youtubeLink = event.target.elements['youtube-link'].value;
 
@@ -22,6 +24,21 @@ function TranscriptionForm() {
       setOpen(true);
       setHidden(true);
       setTranscriptionStarted(true);
+
+      try {
+        const response = await axios.post('http://localhost:5555/speechToText', { link: youtubeLink });
+        console.log("Transcription complete!");
+
+        if (response.status === 200) {
+          setTranscript(response.data);
+          console.log("Transcript:", response.data);
+        } else {
+          throw new Error('Failed to transcribe video');
+        }
+      } catch (error) {
+        console.error('Error:', error.message);
+        alert('Failed to transcribe video');
+      }
     } else {
       alert('Please enter a valid YouTube link');
     }
@@ -30,7 +47,7 @@ function TranscriptionForm() {
   const handleTranscribeAnotherVideo = () => {
     setTranscriptionStarted(false);
     setHidden(false);
-  }
+  };
 
   return (
     <>
@@ -46,7 +63,7 @@ function TranscriptionForm() {
           justifyContent: 'center',
           alignItems: 'center',
           height: '200px',
-          visibility: hidden ? 'hidden' : 'visible' // Conditionally set visibility
+          visibility: hidden ? 'hidden' : 'visible'
         }}
       >
         <form onSubmit={handleStartTranscription}>
@@ -64,7 +81,7 @@ function TranscriptionForm() {
           </Box>
         </form>
       </Box>
-      {transcriptionStarted && <TranscriptionProcess onTranscribeAnotherVideo={handleTranscribeAnotherVideo}/>}
+      {transcriptionStarted && <TranscriptionProcess onTranscribeAnotherVideo={handleTranscribeAnotherVideo} transcript={transcript} />}
     </>
   );
 }
